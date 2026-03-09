@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banker's Algorithm Simulator - Advanced Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="enhanced_styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <span class="logo-icon">🏦</span>
+                <h1>Banker's Algorithm Simulator</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#theory" class="nav-link">Theory</a></li>
+                <li><a href="#simulator" class="nav-link">Simulator</a></li>
+                <li><a href="#visualization" class="nav-link">Visualization</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2 class="hero-title">Banker's Algorithm</h2>
+            <p class="hero-subtitle">Advanced Deadlock Avoidance System</p>
+            <p class="hero-description">Interactive learning platform for operating systems resource allocation</p>
+        </div>
+    </section>
+
+    <!-- Theory Section -->
+    <section id="theory" class="theory-section">
+        <div class="container">
+            <h2 class="section-title">Understanding Banker's Algorithm</h2>
+            
+            <!-- What is Banker's Algorithm -->
+            <div class="theory-grid">
+                <div class="theory-card glass-effect">
+                    <div class="card-icon">📚</div>
+                    <h3>What is Banker's Algorithm?</h3>
+                    <p>
+                        Banker's Algorithm is a resource allocation and deadlock avoidance algorithm that determines 
+                        whether a system can safely process resource requests without entering a deadlock state. It simulates 
+                        the processes of a banker managing customer loans, ensuring that enough resources remain available 
+                        to satisfy all customer demands.
+                    </p>
+                </div>
+
+                <div class="theory-card glass-effect">
+                    <div class="card-icon">🎯</div>
+                    <h3>Why Deadlock Avoidance?</h3>
+                    <p>
+                        Deadlock occurs when multiple processes wait indefinitely for resources held by each other. 
+                        Unlike deadlock detection (which identifies existing deadlocks) or prevention (which restricts 
+                        resource requests), Banker's Algorithm avoids deadlocks by pre-checking if a resource request 
+                        would lead to an unsafe state before granting it.
+                    </p>
+                </div>
+
+                <div class="theory-card glass-effect">
+                    <div class="card-icon">💼</div>
+                    <h3>Bank Analogy</h3>
+                    <p>
+                        <strong>Processes = Customers</strong> • <strong>Resources = Money</strong><br><br>
+                        A banker manages customer loans. Each customer declares their maximum credit need. 
+                        The banker only grants a loan if, after granting it, he can still satisfy all other customers' 
+                        maximum demands using available funds + money that will be returned when customers settle their loans.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Key Terms -->
+            <div class="key-terms-section">
+                <h3 class="subsection-title">Key Concepts & Definitions</h3>
+                <div class="terms-grid">
+                    <div class="term-card">
+                        <div class="term-icon">📊</div>
+                        <h4>Allocation Matrix</h4>
+                        <p>Current resources already assigned to each process. Shows what each process currently holds.</p>
+                        <code>e.g., Process P0 has: CPU=2, Memory=1, Disk=3</code>
+                    </div>
+
+                    <div class="term-card">
+                        <div class="term-icon">🎁</div>
+                        <h4>Maximum Demand</h4>
+                        <p>Maximum resources each process may need during its lifetime. Processes declare this upfront.</p>
+                        <code>e.g., Process P0 may need up to: CPU=4, Memory=3, Disk=5</code>
+                    </div>
+
+                    <div class="term-card">
+                        <div class="term-icon">📉</div>
+                        <h4>Need Matrix</h4>
+                        <p>Remaining resources needed. Calculated as: <strong>Maximum - Allocated</strong></p>
+                        <code>e.g., P0 still needs: CPU=2, Memory=2, Disk=2</code>
+                    </div>
+
+                    <div class="term-card">
+                        <div class="term-icon">💰</div>
+                        <h4>Available Resources</h4>
+                        <p>Unallocated resources currently free in the system. Can be granted to processes.</p>
+                        <code>e.g., Available: CPU=3, Memory=2, Disk=4</code>
+                    </div>
+
+                    <div class="term-card">
+                        <div class="term-icon">✅</div>
+                        <h4>Safe State</h4>
+                        <p>System state where a safe sequence exists - all processes can complete without deadlock.</p>
+                        <code>All processes can finish → resources released → no process starves</code>
+                    </div>
+
+                    <div class="term-card">
+                        <div class="term-icon">❌</div>
+                        <h4>Unsafe State</h4>
+                        <p>System state where no safe sequence exists - at least one process cannot complete.</p>
+                        <code>Some processes will wait forever → potential deadlock</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Safety Algorithm Explanation -->
+            <div class="algorithm-section">
+                <h3 class="subsection-title">Safety Algorithm Steps</h3>
+                <div class="algorithm-steps">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Initialize</h4>
+                            <p>Create a Work vector = Available resources and Finish array = all FALSE</p>
+                        </div>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Find Safe Process</h4>
+                            <p>Find a process P where Finish[P] = FALSE and Need ≤ Work</p>
+                        </div>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Release Resources</h4>
+                            <p>If found: Work += Allocation[P], set Finish[P] = TRUE, go to step 2</p>
+                        </div>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Check Safety</h4>
+                            <p>If all Finish = TRUE, system is SAFE. Otherwise, system is UNSAFE</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Simulator Section -->
+    <section id="simulator" class="simulator-section">
+        <div class="container">
+            <h2 class="section-title">Interactive Simulator</h2>
+            
+            <div class="simulator-grid">
+                <!-- Input Controls -->
+                <div class="control-panel glass-effect">
+                    <h3>System Configuration</h3>
+                    
+                    <div class="input-group">
+                        <label for="numProcesses">Number of Processes</label>
+                        <input type="number" id="numProcesses" min="2" max="10" value="5" class="input-field">
+                        <small>Range: 2-10</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="numResources">Resource Types</label>
+                        <input type="number" id="numResources" min="2" max="5" value="3" class="input-field">
+                        <small>Range: 2-5</small>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="generateBtn">Generate Example</button>
+                        <button class="btn btn-secondary" id="loadSampleBtn">Load Sample</button>
+                        <button class="btn btn-danger" id="resetBtn">Reset</button>
+                    </div>
+
+                    <div class="alert-box">
+                        <p><strong>💡 Tip:</strong> Click "Load Sample" for realistic data or "Generate Example" for random values</p>
+                    </div>
+                </div>
+
+                <!-- Matrices Display -->
+                <div class="matrices-panel glass-effect">
+                    <h3>Resource Matrices</h3>
+                    
+                    <div class="matrix-container">
+                        <div class="matrix-box">
+                            <h4>💰 Available Resources</h4>
+                            <div id="availableDisplay" class="matrix-display"></div>
+                        </div>
+
+                        <div class="matrix-box">
+                            <h4>📊 Allocation Matrix</h4>
+                            <div id="allocationDisplay" class="matrix-display"></div>
+                        </div>
+
+                        <div class="matrix-box">
+                            <h4>🎁 Maximum Demand</h4>
+                            <div id="maximumDisplay" class="matrix-display"></div>
+                        </div>
+
+                        <div class="matrix-box">
+                            <h4>📉 Need Matrix</h4>
+                            <div id="needDisplay" class="matrix-display"></div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success" id="calculateBtn" style="width: 100%; margin-top: 20px;">
+                        ▶️ Run Safety Algorithm
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section glass-effect" id="resultsSection" style="display: none;">
+                <h3>Algorithm Results</h3>
+                
+                <div class="result-status" id="resultStatus"></div>
+
+                <div class="result-grid">
+                    <div class="result-box">
+                        <h4>🔄 Safe Sequence</h4>
+                        <div id="safeSequenceDisplay" class="sequence-display"></div>
+                    </div>
+
+                    <div class="result-box">
+                        <h4>📋 Execution Log</h4>
+                        <pre id="executionLog" class="log-display"></pre>
+                    </div>
+                </div>
+
+                <div class="explanation-box">
+                    <h4>🎓 Analysis</h4>
+                    <p id="explanationText"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visualization Section -->
+    <section id="visualization" class="visualization-section">
+        <div class="container">
+            <h2 class="section-title">Resource Visualization</h2>
+
+            <div class="charts-grid">
+                <div class="chart-container glass-effect">
+                    <h3>Resource Allocation Overview</h3>
+                    <canvas id="resourceChart" height="80"></canvas>
+                </div>
+
+                <div class="chart-container glass-effect">
+                    <h3>Need vs Available Analysis</h3>
+                    <canvas id="needChart" height="80"></canvas>
+                </div>
+
+                <div class="chart-container glass-effect">
+                    <h3>Process Resource Comparison</h3>
+                    <canvas id="processChart" height="80"></canvas>
+                </div>
+
+                <div class="chart-container glass-effect">
+                    <h3>System State Timeline</h3>
+                    <canvas id="timelineChart" height="80"></canvas>
+                </div>
+            </div>
+
+            <!-- Progress Bars -->
+            <div class="progress-section glass-effect">
+                <h3>Resource Usage Progress</h3>
+                <div id="progressBarsContainer" class="progress-grid"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">Key Features</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h4>Interactive Learning</h4>
+                    <p>Step-by-step algorithm execution with visual feedback</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h4>Rich Visualizations</h4>
+                    <p>Dynamic charts and progress indicators</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h4>Real-time Validation</h4>
+                    <p>Instant safe/unsafe state detection</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h4>Sample Data</h4>
+                    <p>Pre-loaded realistic examples</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Banker's Algorithm Simulator | Operating Systems Learning Platform | Educational Tool for Deadlock Avoidance</p>
+        <p style="font-size: 12px; margin-top: 10px;">© 2024 | Designed for Academic Excellence</p>
+    </footer>
+
+    <script src="enhanced_script.js"></script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banker's Algorithm Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="header-title">🏦 Banker's Algorithm Simulator</h1>
+                <p class="header-subtitle">Interactive Deadlock Avoidance System</p>
+            </div>
+            <div class="header-right">
+                <button id="themeToggle" class="theme-toggle" title="Toggle dark/light mode">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+        <!-- Input Section -->
+        <section class="card" id="inputCard">
+            <div class="card-header">
+                <h2>📋 System Configuration</h2>
+                <p class="section-description">Define the number of processes and resource types</p>
+            </div>
+            
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="numProcesses" class="input-label">
+                        Number of Processes
+                        <span class="tooltip-icon" title="Total number of processes in the system">?</span>
+                    </label>
+                    <input type="number" id="numProcesses" class="input-field" 
+                           min="2" max="10" value="5" placeholder="Enter number">
+                    <small class="input-hint">Range: 2-10</small>
+                </div>
+
+                <div class="input-group">
+                    <label for="numResources" class="input-label">
+                        Number of Resource Types
+                        <span class="tooltip-icon" title="Different types of resources (e.g., CPU, Memory, Disk)">?</span>
+                    </label>
+                    <input type="number" id="numResources" class="input-field" 
+                           min="2" max="5" value="3" placeholder="Enter number">
+                    <small class="input-hint">Range: 2-5</small>
+                </div>
+            </div>
+
+            <button id="generateBtn" class="btn btn-primary">
+                <span class="btn-icon">⚙️</span>
+                Generate Tables
+            </button>
+        </section>
+
+        <!-- Matrices Section -->
+        <section class="card" id="matricesCard" style="display: none;">
+            <div class="card-header">
+                <h2>📊 Resource Matrices</h2>
+                <p class="section-description">Input allocation, maximum demand, and available resources</p>
+            </div>
+
+            <div class="matrices-container">
+                <!-- Available Resources -->
+                <div class="matrix-box">
+                    <h3 class="matrix-title">
+                        Available Resources
+                        <span class="tooltip-icon" title="Currently available resources in the system">?</span>
+                    </h3>
+                    <div id="availableInputs" class="available-group"></div>
+                </div>
+
+                <!-- Allocation Matrix -->
+                <div class="matrix-box">
+                    <h3 class="matrix-title">
+                        Allocation Matrix
+                        <span class="tooltip-icon" title="Resources currently allocated to each process">?</span>
+                    </h3>
+                    <div id="allocationMatrix" class="matrix-grid"></div>
+                </div>
+
+                <!-- Maximum Matrix -->
+                <div class="matrix-box">
+                    <h3 class="matrix-title">
+                        Maximum Demand
+                        <span class="tooltip-icon" title="Maximum resources each process may need">?</span>
+                    </h3>
+                    <div id="maximumMatrix" class="matrix-grid"></div>
+                </div>
+
+                <!-- Need Matrix -->
+                <div class="matrix-box">
+                    <h3 class="matrix-title">
+                        Need Matrix (Auto-calculated)
+                        <span class="tooltip-icon" title="Remaining needed = Maximum - Allocated">?</span>
+                    </h3>
+                    <div id="needMatrix" class="matrix-grid read-only"></div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button id="calculateBtn" class="btn btn-success">
+                    <span class="btn-icon">▶️</span>
+                    Calculate Safe Sequence
+                </button>
+                <button id="resetBtn" class="btn btn-secondary">
+                    <span class="btn-icon">🔄</span>
+                    Reset
+                </button>
+            </div>
+        </section>
+
+        <!-- Execution Section -->
+        <section class="card" id="executionCard" style="display: none;">
+            <div class="card-header">
+                <h2>🔄 Execution Flow</h2>
+                <p class="section-description">Step-by-step process execution</p>
+            </div>
+
+            <div class="execution-controls">
+                <label class="toggle-label">
+                    <input type="checkbox" id="stepByStepToggle" class="toggle-input">
+                    <span class="toggle-text">Step-by-step mode</span>
+                </label>
+                <label class="toggle-label">
+                    <input type="checkbox" id="instantModeToggle" class="toggle-input">
+                    <span class="toggle-text">Instant mode</span>
+                </label>
+                <div class="speed-control">
+                    <label for="speedSelect" class="speed-label">Speed:</label>
+                    <select id="speedSelect" class="input-field small">
+                        <option value="1000">Slow</option>
+                        <option value="500" selected>Normal</option>
+                        <option value="200">Fast</option>
+                    </select>
+                </div>
+                <button id="nextStepBtn" class="btn btn-small btn-secondary" style="display: none;">
+                    <span class="btn-icon">↓</span>
+                    Next Step
+                </button>
+            </div>
+
+            <div id="executionVisualization" class="execution-grid"></div>
+            <div id="resourceFlow" class="resource-flow"></div>
+        </section>
+
+        <!-- Result Section -->
+        <section class="card" id="resultCard" style="display: none;">
+            <div class="card-header">
+                <h2>✅ Results</h2>
+            </div>
+
+            <div id="resultAlert" class="result-alert"></div>
+
+            <div class="result-actions">
+                <button id="copySequenceBtn" class="btn btn-secondary btn-small">Copy Sequence</button>
+                <button id="exportBtn" class="btn btn-secondary btn-small">Export / Print</button>
+            </div>
+
+            <div class="result-content">
+                <div class="result-box">
+                    <h3>System State</h3>
+                    <div id="systemState" class="state-badge"></div>
+                </div>
+
+                <div class="result-box">
+                    <h3>Safe Sequence</h3>
+                    <div id="safeSequence" class="sequence-display"></div>
+                </div>
+
+                <div class="result-box">
+                    <h3>Explanation</h3>
+                    <p id="explanation" class="explanation-text"></p>
+                </div>
+            </div>
+
+            <div class="details-panel">
+                <button id="toggleDetailsBtn" class="btn btn-secondary btn-small">Show Details</button>
+                <div id="detailsContent" class="details-content" style="display: none;">
+                    <pre id="detailsLog" class="resource-flow"></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Algorithm Info Section -->
+        <section class="card info-card">
+            <div class="card-header">
+                <h2>ℹ️ How It Works</h2>
+            </div>
+
+            <div class="info-columns">
+                <div class="info-column">
+                    <h4>Safety Algorithm</h4>
+                    <ol class="info-list">
+                        <li>Initialize Work = Available resources</li>
+                        <li>Find a process where Need ≤ Work</li>
+                        <li>If found, simulate allocation and release</li>
+                        <li>Repeat until all processes finish or none found</li>
+                        <li>All finished = SAFE, otherwise = UNSAFE</li>
+                    </ol>
+                </div>
+
+                <div class="info-column">
+                    <h4>Key Concepts</h4>
+                    <ul class="info-list">
+                        <li><strong>Allocation:</strong> Resources currently held</li>
+                        <li><strong>Maximum:</strong> Declared maximum needs</li>
+                        <li><strong>Available:</strong> Currently free resources</li>
+                        <li><strong>Need:</strong> Maximum - Allocated</li>
+                        <li><strong>Safe State:</strong> No deadlock possible</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+        <p>Calculating safe sequence...</p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Banker's Algorithm Simulator • Educational OS Learning Tool • © 2024</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

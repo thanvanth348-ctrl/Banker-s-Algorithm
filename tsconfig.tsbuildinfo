@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/types.ts","./src/algorithms/bankersalgorithm.ts","./src/components/resourcerequestpanel.tsx","./src/components/safetyalgorithmpanel.tsx","./src/components/simulationpanel.tsx","./src/components/systemstatedisplay.tsx","./src/data/systemexamples.ts"],"errors":true,"version":"5.9.3"}
